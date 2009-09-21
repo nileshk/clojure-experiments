@@ -15,3 +15,8 @@ which describes how to run Jetty from Clojure.
 like to eventually just use the Maven Jetty plugin instead (which
 would likely require compiling Clojure classes and I'm not sure if I
 could use the REPL that way).
+
+`velocity`
+----------
+
+* Velocity template processing experiment
