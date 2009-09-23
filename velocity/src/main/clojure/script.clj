@@ -20,19 +20,19 @@
   (def rs (. metaData getTables nil schema table 
              (to-array ["TABLE"]))))
 
-(defn table-names
+(defn get-table-names
   "Get table names"
   [connection schema]
   (def metaData (. connection getMetaData))
   (let [rs (. metaData getTables nil schema nil (into-array ["TABLE"]))]
-    (loop []
-      (when (.next rs)
-        ;; TODO return a sequence instead of printing
-        (println (.getString rs "TABLE_NAME"))
-        (recur)))))
+    (loop [result []]
+      (if (not (.next rs))
+        result
+        (recur (conj result (.getString rs "TABLE_NAME")))))))
 
-(let [connection (database-connect)]
-  (table-names connection "public"))
+(def tableNames 
+     (let [connection (database-connect)]
+       (get-table-names connection "public")))
 
 (def outputFileName "outfile.txt")
 (def templateFileName "test.vm")
@@ -43,6 +43,7 @@
 
 ; Setup context
 (. context put "datetime" (. (new Date) toString))
+(. context put "tableNames" tableNames)
 
 (println "Processing template")
 (. template merge context writer)

@@ -1,2 +1,7 @@
 # Velocity template
 Current date/time: $datetime
+
+Tables:
+#foreach( $tableName in $tableNames )
+* $tableName
+#end
