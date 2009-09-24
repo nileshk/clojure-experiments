@@ -30,9 +30,45 @@
         result
         (recur (conj result (.getString rs "TABLE_NAME")))))))
 
+(defn get-column-data
+  "Get table column data"
+  [connection schema table metaData]
+  (let [rs (. metaData getColumns nil schema table nil)]
+    (loop [result []]
+      (if (not (.next rs))
+        result
+        (recur (conj result
+                     {:name (.getString rs "TABLE_NAME")}))))))
+
+(defn get-table-data
+  "Get table data"
+  [connection schema table]
+  (def metaData (. connection getMetaData))
+  (let [rs (. metaData getTables nil schema nil (into-array ["TABLE"]))]
+    (loop [result []]
+      (if (not (.next rs))
+        result
+        (recur (conj result
+                     {:schema schema
+                      :name (.getString rs "TABLE_NAME")
+                      :tableType (.getString rs "TABLE_TYPE")
+                      :remarks (.getString rs "REMARKS")
+                      :columns (get-column-data 
+                                connection schema table metaData)}))))))
+
 (def tableNames 
      (let [connection (database-connect)]
        (get-table-names connection "public")))
+
+(def tableData 
+     (let [connection (database-connect)
+           schema "public"]
+       (loop [result []
+              tn (get-table-names connection schema)]
+         (if (empty? tn)
+           result
+           (recur (conj result (get-table-data connection schema (first tn)))
+                  (rest tn))))))
 
 (def outputFileName "outfile.txt")
 (def templateFileName "test.vm")
@@ -44,6 +80,7 @@
 ; Setup context
 (. context put "datetime" (. (new Date) toString))
 (. context put "tableNames" tableNames)
+(. context put "tableData" tableData)
 
 (println "Processing template")
 (. template merge context writer)
