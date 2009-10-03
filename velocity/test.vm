@@ -6,6 +6,16 @@ Tables:
 * $tableName
 #end
 
-#foreach( $td in $tableData )
-* $td
+Table Detail:
+#foreach( $tdata in $tableData )
+#foreach( $td in $tdata )
+* $td.name
+** Schema: $td.schema
+** TableType: $td.tableType
+** Remarks: $td.remarks
+** Columns:
+#foreach ( $column in $td.columns )
+*** $column.name
+#end
+#end
 #end

@@ -38,7 +38,7 @@
       (if (not (.next rs))
         result
         (recur (conj result
-                     {:name (.getString rs "TABLE_NAME")}))))))
+                     {"name" (.getString rs "COLUMN_NAME")}))))))
 
 (defn get-table-data
   "Get table data"
@@ -49,11 +49,11 @@
       (if (not (.next rs))
         result
         (recur (conj result
-                     {:schema schema
-                      :name (.getString rs "TABLE_NAME")
-                      :tableType (.getString rs "TABLE_TYPE")
-                      :remarks (.getString rs "REMARKS")
-                      :columns (get-column-data 
+                     {"schema" schema
+                      "name" (.getString rs "TABLE_NAME")
+                      "tableType" (.getString rs "TABLE_TYPE")
+                      "remarks" (.getString rs "REMARKS")
+                      "columns" (get-column-data 
                                 connection schema table metaData)}))))))
 
 (def tableNames 
