@@ -89,16 +89,38 @@
       (. template merge context writer)
       (println "Finished"))))
 
+(defn process-template-for-each-table
+  [file-map]
+  (loop [t tableData]
+    (if (not-empty t)
+      (let [td (first t)
+            fm { :template (:template file-map)
+                :out (str (get td "name") (:outMask file-map)) }
+            context (new VelocityContext)]
+        (println fm)
+        (. context put "datatime" (. (new Date) toString))
+        (. context put "table" td)
+        (process-template fm context)))
+    (if (empty? t)
+      nil
+      (recur (rest t)))))
+
 (defn process-template-mappings "Process all given template mappings"
   [template-mappings]
   (println "Processing files...")
   (loop [mappings template-mappings]
-    (if (not-empty mappings) 
-      (process-template (first mappings) all-tables-context))
+    (if (not-empty mappings)
+      (let [m (first mappings)]
+        (if (contains? m :out)
+          (process-template m all-tables-context)
+          (process-template-for-each-table m))))
     (if (empty? mappings)
       nil
       (recur (rest mappings))))
   (println "Finished processing files..."))
 
-(def file-mappings [ { :template "test.vm" :out "outfile.txt" } ])
+(def file-mappings 
+     [ { :template "test.vm" :out "outfile.txt" }
+       { :template "test2.vm" :outMask ".java"} ])
+
 (process-template-mappings file-mappings)
