@@ -70,9 +70,15 @@
            (recur (conj result (get-table-data connection schema (first tn)))
                   (rest tn))))))
 
-(def context (new VelocityContext))
+(def all-tables-context
+     (let [context (new VelocityContext)]
+       (. context put "datetime" (. (new Date) toString))
+       (. context put "tableNames" tableNames)
+       (. context put "tableData" tableData)
+       context))
 
-(defn process-template "Process a Velocity template and output a file" [fileMap]
+(defn process-template "Process a Velocity template and output a file"
+  [fileMap context]
   (let [templateFileName (:template fileMap)
         outputFileName (:out fileMap)
         template (Velocity/getTemplate templateFileName)
@@ -87,16 +93,12 @@
   [template-mappings]
   (println "Processing files...")
   (loop [mappings template-mappings]
-    (if (not-empty mappings) (process-template (first mappings)))
+    (if (not-empty mappings) 
+      (process-template (first mappings) all-tables-context))
     (if (empty? mappings)
       nil
       (recur (rest mappings))))
   (println "Finished processing files..."))
-
-; Setup context
-(. context put "datetime" (. (new Date) toString))
-(. context put "tableNames" tableNames)
-(. context put "tableData" tableData)
 
 (def file-mappings [ { :template "test.vm" :out "outfile.txt" } ])
 (process-template-mappings file-mappings)
