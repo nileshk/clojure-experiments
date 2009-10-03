@@ -1,0 +1,14 @@
+/*
+ * Current date/time: $datetime
+ */
+package com.example.output
+
+public interface MyExample {
+
+#foreach ( $column in $table.columns )
+    String get${column.name}();
+
+    void set${column.name}(String ${column.name});
+
+#end
+}

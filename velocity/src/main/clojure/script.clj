@@ -47,7 +47,7 @@
   "Get table data"
   [connection schema table]
   (def metaData (. connection getMetaData))
-  (let [rs (. metaData getTables nil schema nil (into-array ["TABLE"]))]
+  (let [rs (. metaData getTables nil schema table (into-array ["TABLE"]))]
       (if (.next rs)
         {"schema" schema
          "name" (.getString rs "TABLE_NAME")
@@ -56,7 +56,7 @@
          "columns" (get-column-data 
                     connection schema table metaData)})))
 
-(def tableNames 
+(def tableNames
      (let [connection (database-connect)]
        (get-table-names connection "public")))
 
@@ -85,9 +85,7 @@
         outputStream (new FileOutputStream outputFileName false)]
     (with-open 
         [writer (new BufferedWriter (new OutputStreamWriter outputStream))]
-      (println "Processing template")
-      (. template merge context writer)
-      (println "Finished"))))
+      (. template merge context writer))))
 
 (defn process-template-for-each-table
   [file-map]
@@ -97,8 +95,7 @@
             fm { :template (:template file-map)
                 :out (str (get td "name") (:outMask file-map)) }
             context (new VelocityContext)]
-        (println fm)
-        (. context put "datatime" (. (new Date) toString))
+        (. context put "datetime" (. (new Date) toString))
         (. context put "table" td)
         (process-template fm context)))
     (if (empty? t)
@@ -107,7 +104,6 @@
 
 (defn process-template-mappings "Process all given template mappings"
   [template-mappings]
-  (println "Processing files...")
   (loop [mappings template-mappings]
     (if (not-empty mappings)
       (let [m (first mappings)]
@@ -116,11 +112,11 @@
           (process-template-for-each-table m))))
     (if (empty? mappings)
       nil
-      (recur (rest mappings))))
-  (println "Finished processing files..."))
+      (recur (rest mappings)))))
 
 (def file-mappings 
      [ { :template "test.vm" :out "outfile.txt" }
        { :template "test2.vm" :outMask ".java"} ])
 
 (process-template-mappings file-mappings)
+(println "Finished")
