@@ -70,20 +70,33 @@
            (recur (conj result (get-table-data connection schema (first tn)))
                   (rest tn))))))
 
-(def outputFileName "outfile.txt")
-(def templateFileName "test.vm")
 (def context (new VelocityContext))
-(def template (Velocity/getTemplate templateFileName))
-(def outputStream (new FileOutputStream outputFileName false))
-(def writer (new BufferedWriter (new OutputStreamWriter outputStream)))
+
+(defn process-template "Process a Velocity template and output a file" [fileMap]
+  (let [templateFileName (:template fileMap)
+        outputFileName (:out fileMap)
+        template (Velocity/getTemplate templateFileName)
+        outputStream (new FileOutputStream outputFileName false)]
+    (with-open 
+        [writer (new BufferedWriter (new OutputStreamWriter outputStream))]
+      (println "Processing template")
+      (. template merge context writer)
+      (println "Finished"))))
+
+(defn process-template-mappings "Process all given template mappings"
+  [template-mappings]
+  (println "Processing files...")
+  (loop [mappings template-mappings]
+    (if (not-empty mappings) (process-template (first mappings)))
+    (if (empty? mappings)
+      nil
+      (recur (rest mappings))))
+  (println "Finished processing files..."))
 
 ; Setup context
 (. context put "datetime" (. (new Date) toString))
 (. context put "tableNames" tableNames)
 (. context put "tableData" tableData)
 
-(println "Processing template")
-(. template merge context writer)
-(. writer flush)
-(. writer close)
-(println "Finished")
+(def file-mappings [ { :template "test.vm" :out "outfile.txt" } ])
+(process-template-mappings file-mappings)
