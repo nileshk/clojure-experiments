@@ -9,6 +9,9 @@
 (import '(java.sql
           Connection DatabaseMetaData ResultSet DriverManager))
 
+(defn if-not-nil "Returns value if not nil, blank string otherwise" [str]
+  (if (nil? str) "" str))
+  
 (defn database-connect "Connect to database" []
   (Class/forName "org.postgresql.Driver")
   (DriverManager/getConnection "jdbc:postgresql://localhost/todo" "nil" "nil"))
@@ -45,16 +48,13 @@
   [connection schema table]
   (def metaData (. connection getMetaData))
   (let [rs (. metaData getTables nil schema nil (into-array ["TABLE"]))]
-    (loop [result []]
-      (if (not (.next rs))
-        result
-        (recur (conj result
-                     {"schema" schema
-                      "name" (.getString rs "TABLE_NAME")
-                      "tableType" (.getString rs "TABLE_TYPE")
-                      "remarks" (.getString rs "REMARKS")
-                      "columns" (get-column-data 
-                                connection schema table metaData)}))))))
+      (if (.next rs)
+        {"schema" schema
+         "name" (.getString rs "TABLE_NAME")
+         "tableType" (.getString rs "TABLE_TYPE")
+         "remarks" (if-not-nil (.getString rs "REMARKS"))
+         "columns" (get-column-data 
+                    connection schema table metaData)})))
 
 (def tableNames 
      (let [connection (database-connect)]

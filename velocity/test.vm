@@ -7,8 +7,7 @@ Tables:
 #end
 
 Table Detail:
-#foreach( $tdata in $tableData )
-#foreach( $td in $tdata )
+#foreach( $td in $tableData )
 * $td.name
 ** Schema: $td.schema
 ** TableType: $td.tableType
@@ -16,6 +15,5 @@ Table Detail:
 ** Columns:
 #foreach ( $column in $td.columns )
 *** $column.name
-#end
 #end
 #end
