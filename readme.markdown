@@ -19,4 +19,11 @@ could use the REPL that way).
 `velocity`
 ----------
 
-* Velocity template processing experiment
+* This is currently a simple code generation tool which uses
+  [Velocity](http://velocity.apache.org/) templates.  The templates
+  are passed database metadata.
+* The ultimate goal is to have a flexible code generation toolkit that:
+  * Has pluggable input sources
+  * Has pluggable output sources (e.g. be able to use different
+    template libraries)
+  * Can be comfortably used from the REPL
