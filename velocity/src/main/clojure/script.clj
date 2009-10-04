@@ -105,12 +105,14 @@
       (. template merge context writer))))
 
 (defn process-template-for-each-table
-  [file-map]
+  [file-map tableData]
   (loop [t tableData]
     (if (not-empty t)
       (let [td (first t)
             fm { :template (:template file-map)
-                :out (str (get td "name") (:outMask file-map)) }
+                :out (if (contains? file-map :out)
+                  (:out file-map)
+                  (str (get td "name") (:outMask file-map))) }
             context (new VelocityContext)]
         (. context put "datetime" (. (new Date) toString))
         (. context put "table" td)
@@ -124,16 +126,23 @@
   (loop [mappings template-mappings]
     (if (not-empty mappings)
       (let [m (first mappings)]
-        (if (contains? m :out)
-          (process-template m all-tables-context)
-          (process-template-for-each-table m))))
+        (if (contains? m :table)
+          (process-template-for-each-table 
+           m [(get tableDataMap (:table m))])
+           (if (contains? m :out)
+             (process-template m all-tables-context)
+             (process-template-for-each-table m tableData)))))
     (if (empty? mappings)
       nil
       (recur (rest mappings)))))
 
 (def file-mappings 
-     [ { :template "test.vm" :out "outfile.txt" }
-       { :template "test2.vm" :outMask ".java"} ])
+     [;; Pass data for all tables to template and produce a single file
+      { :template "test.vm" :out "outfile.txt" }
+      ;; Create a seperate file for each table
+      { :template "test2.vm" :outMask ".java"}
+      ;; Create a single file for a single table
+      { :template "test2.vm" :out "CookieSingle.java" :table "cookies"}])
 
 (process-template-mappings file-mappings)
 (println "Finished")
