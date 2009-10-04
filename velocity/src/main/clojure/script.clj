@@ -11,7 +11,21 @@
 
 (defn if-not-nil "Returns value if not nil, blank string otherwise" [str]
   (if (nil? str) "" str))
-  
+
+(defn seq-to-map
+  "Converts a sequence into a map using given function to produce keys"
+  [seq fn]
+  (loop [result {} s seq]
+    (let [v (first s)]
+      (if (empty? s)
+        result
+        (recur (assoc result (fn v) v) (rest s))))))
+
+(defn mapseq-to-map
+  "Converts a sequence of maps into a map with keys from values of the maps"
+  [seq key]
+  (seq-to-map seq #(get % key)))
+
 (defn database-connect "Connect to database" []
   (Class/forName "org.postgresql.Driver")
   (DriverManager/getConnection "jdbc:postgresql://localhost/todo" "nil" "nil"))
@@ -69,6 +83,9 @@
            result
            (recur (conj result (get-table-data connection schema (first tn)))
                   (rest tn))))))
+
+(def tableDataMap
+     (mapseq-to-map tableData "name"))
 
 (def all-tables-context
      (let [context (new VelocityContext)]
