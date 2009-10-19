@@ -58,3 +58,20 @@
      (not (nil? halves))
      (= (halves 0) (string-reverse (halves 1))))))
 
+(def eul4
+     (loop [n1 999]
+       (let [loop-result
+             (loop [n2 999]
+         (if (= n2 1)
+           nil
+           (let [p (* n1 n2)]
+             (if (palindrome? p)
+               p
+               (recur (dec n2))))))]
+         (if (not (nil? loop-result))
+           loop-result
+           (recur (dec n1))))))
+         
+
+             
+           
