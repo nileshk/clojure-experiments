@@ -39,3 +39,22 @@
               (prime? n))
            n
            (recur (dec n))))))
+
+(defn string-halves
+  "Splits string in half.  If string is not evenly divisable returns nil."
+  [s]
+  (let [s-len (.length s)]
+    (if (zero? (mod s-len 2))
+      (let [middle (/ s-len 2)]
+        [(.substring s 0 middle) (.substring s middle s-len)])
+      nil)))
+
+(defn string-reverse "Reverse a string" [s]
+  (apply str (map str (reverse s))))
+
+(defn palindrome? [n]
+  (let [halves (string-halves (str n))]
+    (and
+     (not (nil? halves))
+     (= (halves 0) (string-reverse (halves 1))))))
+
