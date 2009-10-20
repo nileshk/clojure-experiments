@@ -67,26 +67,3 @@
             (if (= n2 1) (dec n1) n1)
             (if (= n2 1) 999 (dec n2))
             (if (and (palindrome? p) (> p max)) p max))))))e
-
-(def eul4-fail
-     (loop [n1 999 n2 999]
-       (let [p (* n1 n2)]
-         (if (palindrome? p)
-           p
-           (recur 
-            (if (= n1 n2) n1 (dec n1))
-            (if (= n1 n2) (dec n2) n2))))))
-
-(def eul4-fail2
-     (loop [n1 999]
-       (let [loop-result
-             (loop [n2 999]
-               (if (= n2 1)
-                 nil
-                 (let [p (* n1 n2)]
-                   (if (palindrome? p)
-                     p
-                     (recur (dec n2))))))]
-         (if (not (nil? loop-result))
-           loop-result
-           (recur (dec n1))))))
