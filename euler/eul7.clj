@@ -1,4 +1,13 @@
-; prime? function taken from eul3.clj
+; functions taken from eul3.clj
+(defn half-of [n]
+  (if (zero? (mod n 2))
+    (/ n 2)
+    (/ (- n 1) 2)))
+
+(defn half-of-odd [n]
+  (let [h (half-of n)]
+    (if (even? h) (inc h) h)))
+
 (defn prime? [n]
   (if (= 1 n)
     false
