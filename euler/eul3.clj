@@ -9,13 +9,18 @@
           false
           (recur (dec d)))))))
 
-(defn eul3 []
-     (let [f 600851475143]
-       (loop [n (dec f)]
-         (if (and 
-              (zero? (mod f n))
-              (prime? n))
-           n
-           (recur (dec n))))))
+(defn half-of [n]
+  (if (zero? (mod n 2))
+    (/ n 2)
+    (/ (- n 1) 2)))
 
-(eul3)
+(defn eul3 [number]
+  (loop [n (half-of number)]
+    (if (and 
+         (zero? (mod number n))
+         (prime? n))
+      n
+      (recur (dec n)))))
+
+(eul3 13195) ;; 29
+(eul3 600851475143)
