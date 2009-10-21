@@ -1,4 +1,3 @@
-;; Euler #3 doesn't work yet
 (defn half-of [n]
   (if (zero? (mod n 2))
     (/ n 2)
@@ -27,22 +26,15 @@
 ; Vector of 2000 primes
 (def primes (vec (take primes-length (filter prime? (iterate inc 1)))))
 
-(defn next-prime-factor [n]
-  (loop [index 0]
-    (if (= index primes-length)
-      nil
-      (let [prime (primes index)]
-        (if (zero? (mod n prime))
-          prime
-          (recur (inc index)))))))
-
 (defn eul3 [number]
-  (loop [n number max-factor 0]
-    (let [prime-factor (next-prime-factor n)]
-      (if (nil? prime-factor)
-        max-factor
-        (recur (/ number prime-factor)
-               (max prime-factor max-factor))))))
+  (loop [index 0 max-factor 0]
+    (if (= index primes-length)
+      max-factor
+      (let [prime (primes index)]
+        (recur (inc index)
+               (if (zero? (mod number prime))
+                 (max prime max-factor)
+                 max-factor))))))
 
-(eul3 13195) ;; 29
+;(eul3 13195) ;; 29
 (eul3 600851475143)
