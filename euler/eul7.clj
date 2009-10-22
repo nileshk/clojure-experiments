@@ -23,6 +23,6 @@
               (recur (- d 2)))))))))
 
 (defn eul7 [n]
-  (last (take n (filter prime? (iterate inc 1))))
+  (last (take n (filter prime? (iterate inc 1)))))
 
 (eul7 10001)
