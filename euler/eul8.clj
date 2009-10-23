@@ -5,8 +5,14 @@
       (recur (inc index)
              (conj v (.substring str index (+ index 1)))))))
 
-(defn product-string [str]
-  (reduce * (map #(new Integer %) (string-to-vector str))))
+(defn string-to-int-vector [s]
+  (map #(new Integer %) (string-to-vector s)))
+
+(defn number-digits [n]
+  (string-to-int-vector (str n)))
+
+(defn product-string [s]
+  (reduce * (string-to-int-vector s)))
 
 (let [number
       (str
