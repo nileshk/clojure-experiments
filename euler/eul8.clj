@@ -9,6 +9,7 @@
   (map #(new Integer %) (string-to-vector s)))
 
 (defn number-digits [n]
+  "Return vector of a number's digits"
   (string-to-int-vector (str n)))
 
 (defn product-string [s]
