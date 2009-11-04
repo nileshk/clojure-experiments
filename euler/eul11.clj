@@ -6,6 +6,9 @@
        (map #(rest %) m)
        (conj newmatrix (map #(first (take 1 %)) m))))))
 
+(defn reverse-matrix [matrix]
+  (map reverse matrix))
+
 (defn str-to-int-seq [s]
   (map #(new Integer %) (seq (.split s " "))))
 
@@ -58,4 +61,5 @@
         grid (map str-to-int-seq grid-str)])
   (max (scan-horizontal grid)
        (scan-horizontal (rotate-matrix grid))
-       (scan-diag grid)))
+       (scan-diag grid)
+       (scan-diag (reverse-matrix grid))))
