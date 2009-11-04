@@ -19,6 +19,20 @@
 (defn scan-horizontal [g]
   (apply max (map scan-horizontal-line g)))
 
+(defn scan-diag-row [grid]
+  (let [s (- (count (first grid)) 4)]
+    (apply max (map #(reduce + %) (rotate-matrix [(take s (first grid))
+                                     (take s (drop 1 (nth grid 1)))
+                                     (take s (drop 2 (nth grid 2)))
+                                     (take s (drop 3 (nth grid 3)))])))))
+
+(defn scan-diag [grid]
+  (loop [g grid m 0]
+    (if (<= (count g) 4)
+      m
+      (recur (rest g)
+             (max m (scan-diag-row g))))))
+
 (defn eul11 []
   (let [grid-str
         ["08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08"
@@ -43,4 +57,5 @@
          "01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48"]
         grid (map str-to-int-seq grid-str)])
   (max (scan-horizontal grid)
-       (scan-horizontal (rotate-matrix grid))))
+       (scan-horizontal (rotate-matrix grid))
+       (scan-diag grid)))
