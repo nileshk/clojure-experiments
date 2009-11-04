@@ -17,17 +17,22 @@
     (if (<= (count l) 4)
       m
       (recur (rest l)
-             (max m (reduce + (take 4 l)))))))
+             (max m (reduce * (take 4 l)))))))
 
 (defn scan-horizontal [g]
   (apply max (map scan-horizontal-line g)))
 
 (defn scan-diag-row [grid]
   (let [s (- (count (first grid)) 4)]
-    (apply max (map #(reduce + %) (rotate-matrix [(take s (first grid))
+    (apply max (map #(reduce * %)
+                    (rotate-matrix
+                     [(take s (first grid))
                                      (take s (drop 1 (nth grid 1)))
                                      (take s (drop 2 (nth grid 2)))
                                      (take s (drop 3 (nth grid 3)))])))))
+;                     (map #(take s (drop % (nth grid %)))
+;                          (range 0 3)
+
 
 (defn scan-diag [grid]
   (loop [g grid m 0]
@@ -63,3 +68,6 @@
        (scan-horizontal (rotate-matrix grid))
        (scan-diag grid)
        (scan-diag (reverse-matrix grid))))
+
+;; (eul11)
+;; 70600674
