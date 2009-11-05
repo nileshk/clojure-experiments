@@ -26,12 +26,8 @@
   (let [s (- (count (first grid)) 4)]
     (apply max (map #(reduce * %)
                     (rotate-matrix
-                     [(take s (first grid))
-                                     (take s (drop 1 (nth grid 1)))
-                                     (take s (drop 2 (nth grid 2)))
-                                     (take s (drop 3 (nth grid 3)))])))))
-;                     (map #(take s (drop % (nth grid %)))
-;                          (range 0 3)
+                     (map #(take s (drop % (nth grid %)))
+                          (range 0 4)))))))
 
 
 (defn scan-diag [grid]
